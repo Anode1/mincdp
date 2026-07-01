@@ -1,5 +1,7 @@
-/* Demo.java -- drive page.html through the Java client: type a query, press
- * Enter, assert the page echoes it. The twin of c/demo.c. Started by demo.sh.
+/* Demo.java -- drive page.html through the Java client. The twin of c/demo.c: a
+ * cookbook of the two eyeless test kinds -- page-internals checks (presence,
+ * attribute, text, computed style, geometry) and interaction ("hands"). The
+ * "eyes" (a screenshot) live in tests/shot.sh. Started by demo.sh.
  *   args: CHROME_HOST CHROME_PORT PAGE_URL
  * Exit 0 = all passed, 1 = a failure, 2 = usage. */
 public final class Demo {
@@ -7,6 +9,11 @@ public final class Demo {
     private static void ok(String label, boolean cond) {
         if (cond) { pass++; System.out.println("  ok   " + label); }
         else      { fail++; System.out.println("  FAIL " + label); }
+    }
+
+    /* the workhorse for page-internals checks: is this JS expression true? */
+    private static boolean jstrue(Cdp c, String js) {
+        try { return c.evalBool(js); } catch (Exception e) { return false; }
     }
 
     private static final String ECHOED =
@@ -20,6 +27,14 @@ public final class Demo {
             c.navigate(url); ok("navigate to page", true);
             ok("page loaded (#q present)", c.waitBool("!!document.getElementById('q')", 5000));
 
+            // --- page internals: inspect the rendered DOM (no interaction) ---
+            ok("title is right",           jstrue(c, "document.title==='mincdp demo'"));
+            ok("attribute (placeholder)",  jstrue(c, "document.getElementById('q').getAttribute('placeholder')==='type, then Enter'"));
+            ok("text content (#go)",       jstrue(c, "document.getElementById('go').textContent==='go'"));
+            ok("visible (computed style)", jstrue(c, "getComputedStyle(document.getElementById('go')).display!=='none'"));
+            ok("laid out (geometry)",      jstrue(c, "document.getElementById('go').getBoundingClientRect().width>0"));
+
+            // --- interaction: drive the page and assert the result (hands) ---
             ok("nothing echoed before typing (control)", !c.evalBool(ECHOED));
 
             c.evalBool("(function(){document.getElementById('q').focus();return true})()");

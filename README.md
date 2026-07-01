@@ -31,15 +31,48 @@ Playwright; this earns its place only where minimalism and zero dependencies do.
 Needs a headless Chrome/Chromium on `PATH` (and `curl`, and `cc` / `javac`).
 
 ```
+make ut          # the whole regression suite (see Tests)
 make demo-c      # build c/demo and run it against page.html
 make demo-java   # build java/Demo and run it against page.html
 make demo        # both
+make shot        # screenshot page.html so you can SEE it
 ```
 
-Each prints the same six assertions and a `demo: 6 passed, 0 failed` line. The
-demo types "mincdp works" into the page, presses Enter, and asserts the page
-echoes it: the real input path, not a static DOM dump. Set `CDP_DEBUG=1` to see
-every CDP frame sent and received.
+Each demo prints a series of assertions and a `demo: N passed, 0 failed` line. It
+first inspects the page's internals (title, attribute, text, computed style,
+geometry), then drives the real input path: type "mincdp works", press Enter, and
+assert the page echoes it. Set `CDP_DEBUG=1` to see every CDP frame.
+
+## Tests
+
+`make ut` runs the full regression, in two kinds, so a test set has both hands
+and eyes:
+
+- **codeut** -- "regular" browser-free unit tests of the client's pure helpers
+  (base64, JSON escaping), several examples each. No Chrome needed, so it always
+  runs (`tests/codeut.c`).
+- **uiut** -- the client driving real headless Chrome, in two kinds:
+  - *page internals + hands* -- the demos inspect the rendered DOM (presence,
+    attribute, text, computed style, geometry), then interact (type, press Enter,
+    assert the DOM changed). Eyeless: all through `Runtime.evaluate`
+    (`c/demo.c`, `java/Demo.java`).
+  - *eyes, for agents* -- `tests/shot.sh` screenshots the page with Chrome's
+    `--screenshot` and asserts a valid, non-trivial PNG. The PNG is also there to
+    be looked at: open it, or have an agent Read it.
+
+Each layer reports `PASS` / `FAIL` / `SKIP` (a missing toolchain SKIPs, exit 77);
+the suite fails only if a non-skipped layer fails:
+
+```
+mincdp regression:
+  codeut (units)       PASS
+  uiut hands: C        PASS
+  uiut hands: Java     PASS
+  uiut eyes: shot      PASS
+```
+
+The demos double as the interaction tests; `make demo-c` / `demo-java` run them
+on their own.
 
 You start Chrome; the client attaches. `demo.sh` does that wiring (launch a
 headless Chrome with `--remote-debugging-port`, run the demo, tear down), and it
@@ -115,11 +148,14 @@ headless smoke test needs, in code you can read end to end. Pick accordingly.
 ```
 page.html          self-contained demo target (no server, no network)
 demo.sh            launch Chrome, run a demo, tear down (shared by both)
-Makefile           make demo-c / demo-java / demo / clean
+Makefile           make ut / demo-c / demo-java / demo / shot / clean
 c/cdp.h            the C client (single-header library)
-c/demo.c           the C demonstration
+c/demo.c           the C demonstration = the uiut interaction test (hands)
 java/Cdp.java      the Java client (single file)
-java/Demo.java     the Java demonstration
+java/Demo.java     the Java demonstration = the uiut interaction test (hands)
+tests/run.sh       the regression runner (make ut): codeut + uiut, PASS/FAIL/SKIP
+tests/codeut.c     browser-free unit tests of the client's pure helpers
+tests/shot.sh      the eyes: screenshot page.html to a PNG (Chrome --screenshot)
 ```
 
 ## Lineage

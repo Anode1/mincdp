@@ -1,6 +1,7 @@
 # build output
 c/demo
 java/out/
+tests/codeut
 *.o
 *.class
 *.dSYM/
