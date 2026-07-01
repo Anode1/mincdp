@@ -1,0 +1,6 @@
+# build output
+c/demo
+java/out/
+*.o
+*.class
+*.dSYM/

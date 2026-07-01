@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>mincdp demo</title></head>
+<body>
+  <h1>mincdp demo</h1>
+  <input id="q" placeholder="type, then Enter">
+  <button id="go">go</button>
+  <div id="out"></div>
+  <script>
+    function run() {
+      document.getElementById('out').textContent =
+        'echo: ' + document.getElementById('q').value;
+    }
+    document.getElementById('go').onclick = run;
+    document.getElementById('q').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') run();
+    });
+  </script>
+</body>
+</html>
