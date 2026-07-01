@@ -12,6 +12,12 @@ stack:
 
 Same idea, same small command set, one demonstration each against the same page.
 
+![The demo page, driven and captured by mincdp](docs/demo.png)
+
+*The image above was produced by mincdp itself: the demo typed into the page,
+pressed Enter, then captured this driven state with `cdp_screenshot`
+(`Page.captureScreenshot`).*
+
 ## Why it exists
 
 CDP is the wire protocol Puppeteer and Playwright use under the hood. Talking it
