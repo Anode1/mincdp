@@ -22,24 +22,27 @@ changed is the browser.
 
 ## How mincdp came about
 
-It came out of a conversation about eyes. Mid-task the agent hedged: "What still
-needs your eyes: I can't configure a study headlessly. If you set up a test page,
-I can drive the screenshot tooling (tests/shot.sh) to visually confirm the render
-before you commit." Vas replied: "you can do it! I made eyes for you, please look
-at tests/shot.sh." The agent: "Yes! Let me use the eyes", and it screenshotted the
-live page in headless Chrome, then read the PNG's pixels directly. As it put it at
-the time: "the script is the optic nerve, Chrome is the retina, my Read of the PNG
-is the seeing."
+It came out of two short conversations about eyes.
 
-Those first eyes were static, a frozen screenshot: the direct heir of the Xvfb
-screen-scrape in this folder, headless Chrome now in place of Xvfb plus Firefox
-plus xwd, but the same "render, then capture a picture" idea. The next want was to
-stop looking at a frozen frame and actually drive the page: type a query, press
-Enter, assert the result renders. Xvfb screen-scraping is ancient technology, and
-by the mid-2010s (around 2015) headless browser automation had moved to the Chrome
+The first was about *seeing*. Mid-task the agent hedged: "What still needs your
+eyes: I can't configure a study headlessly. If you set up a test page, I can drive
+the screenshot tooling (tests/shot.sh) to visually confirm the render before you
+commit." Vas replied: "you can do it! I made eyes for you, please look at
+tests/shot.sh." The agent: "Yes! Let me use the eyes", and it screenshotted the
+live page in headless Chrome and read the PNG's pixels directly. As it put it then:
+"the script is the optic nerve, Chrome is the retina, my Read of the PNG is the
+seeing." Those first eyes were static, a frozen screenshot: the direct heir of the
+Xvfb screen-scrape in this folder, headless Chrome now in place of Xvfb plus
+Firefox plus xwd, the same "render, then capture a picture" idea.
+
+The second was about *acting*. Asking to test the GUI for real, the agent got
+Vas's "You have eyes", and answered "yes, I have eyes now!". By then the eyes were
+not a snapshot but the live page under control: type a query, press Enter, assert
+the result renders. Xvfb screen-scraping is ancient technology, and by the
+mid-2010s (around 2015) headless browser automation had moved to the Chrome
 DevTools Protocol: browsers driving themselves over a wire protocol, no fake
-display, no screenshot-and-guess. So the decision was to use CDP directly, and that
-became mincdp, one directory up. This folder is where the lineage starts.
+display, no screenshot-and-guess. That is the eyes mincdp gives, one directory up.
+This folder is where the lineage starts.
 
 ## Reuse and reach
 
