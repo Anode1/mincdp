@@ -44,6 +44,12 @@ int cdp_insert_text(cdp *c, const char *text);
  * its virtual key so a keydown listener sees e.key === "Enter"). */
 int cdp_key(cdp *c, const char *key);
 
+/* Page.captureScreenshot (PNG) of the CURRENT page state -- unlike Chrome's
+ * --screenshot (which shoots a fresh load), this captures whatever you have
+ * driven the page to. Decodes the base64 and writes it to path. Bounded by the
+ * 1 MiB message cap. */
+int cdp_screenshot(cdp *c, const char *path);
+
 #endif /* CDP_H */
 
 /* ======================================================================== */
@@ -105,20 +111,40 @@ static int cdp_write_all(int fd, const void *buf, size_t n) {
     return 0;
 }
 
+static const char cdp_b64_alpha[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
 static void cdp_b64(const unsigned char *in, size_t n, char *out) {
-    static const char *A =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     size_t i, o = 0;
     for (i = 0; i < n; i += 3) {
         unsigned v = (unsigned)in[i] << 16;
         if (i + 1 < n) v |= (unsigned)in[i + 1] << 8;
         if (i + 2 < n) v |= in[i + 2];
-        out[o++] = A[(v >> 18) & 63];
-        out[o++] = A[(v >> 12) & 63];
-        out[o++] = (i + 1 < n) ? A[(v >> 6) & 63] : '=';
-        out[o++] = (i + 2 < n) ? A[v & 63] : '=';
+        out[o++] = cdp_b64_alpha[(v >> 18) & 63];
+        out[o++] = cdp_b64_alpha[(v >> 12) & 63];
+        out[o++] = (i + 1 < n) ? cdp_b64_alpha[(v >> 6) & 63] : '=';
+        out[o++] = (i + 2 < n) ? cdp_b64_alpha[v & 63] : '=';
     }
     out[o] = 0;
+}
+
+/* Decode base64 in[0..n) into out bytes; returns the byte count. Skips any char
+ * not in the alphabet; stops at '='. */
+static int cdp_unb64(const char *in, size_t n, unsigned char *out) {
+    size_t i, o = 0;
+    int val = 0, bits = 0;
+    for (i = 0; i < n; i++) {
+        char ch = in[i];
+        const char *p;
+        if (ch == '=') break;
+        if (ch == 0) continue;
+        p = strchr(cdp_b64_alpha, ch);
+        if (!p) continue;
+        val = (val << 6) | (int)(p - cdp_b64_alpha);
+        bits += 6;
+        if (bits >= 8) { bits -= 8; out[o++] = (unsigned char)((val >> bits) & 0xff); }
+    }
+    return (int)o;
 }
 
 /* Escape src into a JSON string body (no surrounding quotes). -1 on overflow. */
@@ -408,6 +434,32 @@ int cdp_key(cdp *c, const char *key) {
         "\"windowsVirtualKeyCode\":%d,\"nativeVirtualKeyCode\":%d}",
         esc, esc, vk, vk);
     return cdp_call(c, "Input.dispatchKeyEvent", params);
+}
+
+int cdp_screenshot(cdp *c, const char *path) {
+    char *d, *end;
+    unsigned char *raw;
+    size_t n;
+    int rawlen, rc = -1;
+    FILE *f;
+
+    if (cdp_call(c, "Page.captureScreenshot", "{\"format\":\"png\"}") < 0) return -1;
+    d = strstr(c->msg, "\"data\":\"");         /* {"result":{"data":"<base64>"}} */
+    if (!d) return -1;
+    d += 8;
+    end = strchr(d, '"');                       /* base64 has no '"', so this ends it */
+    if (!end) return -1;
+    n = (size_t)(end - d);
+
+    raw = malloc(n / 4 * 3 + 3);
+    if (!raw) return -1;
+    rawlen = cdp_unb64(d, n, raw);
+    if (rawlen >= 0 && (f = fopen(path, "wb")) != NULL) {
+        if (fwrite(raw, 1, (size_t)rawlen, f) == (size_t)rawlen) rc = 0;
+        fclose(f);
+    }
+    free(raw);
+    return rc;
 }
 
 #endif /* CDP_IMPLEMENTATION */

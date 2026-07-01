@@ -53,12 +53,14 @@ and eyes:
   runs (`tests/codeut.c`).
 - **uiut** -- the client driving real headless Chrome, in two kinds:
   - *page internals + hands* -- the demos inspect the rendered DOM (presence,
-    attribute, text, computed style, geometry), then interact (type, press Enter,
-    assert the DOM changed). Eyeless: all through `Runtime.evaluate`
-    (`c/demo.c`, `java/Demo.java`).
-  - *eyes, for agents* -- `tests/shot.sh` screenshots the page with Chrome's
-    `--screenshot` and asserts a valid, non-trivial PNG. The PNG is also there to
-    be looked at: open it, or have an agent Read it.
+    attribute, text, computed style, geometry) through `Runtime.evaluate`, then
+    interact (type, press Enter, assert the DOM changed), then screenshot the
+    *driven* state over the protocol (`cdp_screenshot` -> `Page.captureScreenshot`)
+    and assert a valid PNG (`c/demo.c`, `java/Demo.java`).
+  - *eyes, for agents* -- `tests/shot.sh` is the standalone shell version:
+    screenshots a fresh page load with Chrome's `--screenshot`, no client code
+    needed. It complements the demos' protocol screenshot (which captures a driven
+    state). Either PNG is there to be looked at: open it, or have an agent Read it.
 
 Each layer reports `PASS` / `FAIL` / `SKIP` (a missing toolchain SKIPs, exit 77);
 the suite fails only if a non-skipped layer fails:
@@ -95,13 +97,14 @@ Both clients expose the same shape (C names shown; Java is the camelCase twin):
 | `cdp_wait_bool(js, ms)` / `waitBool` | poll a boolean expression until true or timeout |
 | `cdp_insert_text(text)` / `insertText` | `Input.insertText` into the focused element |
 | `cdp_key("Enter")` / `key` | `Input.dispatchKeyEvent` keyDown+keyUp |
+| `cdp_screenshot(path)` / `screenshot` | `Page.captureScreenshot` -> base64 -> write a PNG |
 | `cdp_close()` / `close` | detach |
 
 Responses are matched by id and read with targeted substring checks, not a JSON
 parser. That is the trick that keeps both clients dependency-free: every command
-here returns a boolean or a short ack, so looking for `"value":true` /
-`exceptionDetails` is enough. A command that returned rich JSON would need a real
-parser; none does.
+returns a boolean, a short ack, or one flat field (the screenshot's base64), so
+looking for `"value":true` / `exceptionDetails` / `"data":"..."` is enough. A
+command that returned deeply nested JSON would need a real parser; none does.
 
 ### Embedding the C client
 

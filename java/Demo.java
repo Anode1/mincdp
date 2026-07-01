@@ -16,6 +16,16 @@ public final class Demo {
         try { return c.evalBool(js); } catch (Exception e) { return false; }
     }
 
+    /* is this file a PNG (magic bytes)? */
+    private static boolean isPng(String path) {
+        try {
+            byte[] h = new byte[4];
+            try (java.io.InputStream in = java.nio.file.Files.newInputStream(java.nio.file.Path.of(path))) {
+                return in.read(h) == 4 && (h[0] & 0xff) == 0x89 && h[1] == 'P' && h[2] == 'N' && h[3] == 'G';
+            }
+        } catch (Exception e) { return false; }
+    }
+
     private static final String ECHOED =
         "document.getElementById('out').innerText.indexOf('echo: mincdp works')>=0";
 
@@ -43,6 +53,10 @@ public final class Demo {
 
             c.key("Enter"); ok("press Enter", true);
             ok("page echoed the input after Enter", c.waitBool(ECHOED, 5000));
+
+            // --- eyes over the protocol: screenshot the driven state ---
+            c.screenshot("/tmp/mincdp-demo-java.png");
+            ok("screenshot via CDP -> valid PNG", isPng("/tmp/mincdp-demo-java.png"));
         }
         System.out.println("demo: " + pass + " passed, " + fail + " failed");
         System.exit(fail > 0 ? 1 : 0);

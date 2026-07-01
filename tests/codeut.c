@@ -25,6 +25,10 @@ int main(void) {
     cdp_b64((const unsigned char *)"", 0, b);
     CHECK(strcmp(b, "") == 0, "base64 empty");
 
+    unsigned char raw[8];
+    int rl = cdp_unb64("aGVsbG8=", 8, raw);
+    CHECK(rl == 5 && memcmp(raw, "hello", 5) == 0, "base64 decode roundtrip");
+
     /* JSON string escaping */
     CHECK(cdp_json_escape(e, sizeof e, "plain") == 0 && strcmp(e, "plain") == 0,
           "json escape passthrough");

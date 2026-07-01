@@ -23,6 +23,16 @@ static int jstrue(cdp *c, const char *js) {
     return cdp_eval_bool(c, js, &v) == 0 && v;
 }
 
+/* is this file a PNG (magic bytes)? */
+static int is_png(const char *path) {
+    unsigned char h[4] = {0};
+    FILE *f = fopen(path, "rb");
+    if (!f) return 0;
+    size_t n = fread(h, 1, 4, f);
+    fclose(f);
+    return n == 4 && h[0] == 0x89 && h[1] == 'P' && h[2] == 'N' && h[3] == 'G';
+}
+
 #define ECHOED "document.getElementById('out').innerText.indexOf('echo: mincdp works')>=0"
 
 int main(int argc, char **argv) {
@@ -54,6 +64,10 @@ int main(int argc, char **argv) {
 
     ok("press Enter", cdp_key(c, "Enter") == 0);
     ok("page echoed the input after Enter", cdp_wait_bool(c, ECHOED, 5000) == 0);
+
+    /* --- eyes over the protocol: screenshot the driven state (Page.captureScreenshot) --- */
+    ok("screenshot via CDP -> valid PNG",
+       cdp_screenshot(c, "/tmp/mincdp-demo-c.png") == 0 && is_png("/tmp/mincdp-demo-c.png"));
 
     cdp_close(c);
     printf("demo: %d passed, %d failed\n", pass, fail);

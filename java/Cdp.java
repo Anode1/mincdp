@@ -104,6 +104,19 @@ public final class Cdp implements AutoCloseable {
         send("Input.dispatchKeyEvent", "{\"type\":\"keyUp\","   + at + "}");
     }
 
+    /** Page.captureScreenshot (PNG) of the current page state; writes it to path.
+     *  Unlike Chrome's --screenshot, this captures whatever you have driven the
+     *  page to. */
+    public void screenshot(String path) throws Exception {
+        String resp = send("Page.captureScreenshot", "{\"format\":\"png\"}");
+        int i = resp.indexOf("\"data\":\"");
+        if (i < 0) throw new IllegalStateException("screenshot: no data in response");
+        i += 8;
+        int j = resp.indexOf('"', i);
+        byte[] png = java.util.Base64.getDecoder().decode(resp.substring(i, j));
+        java.nio.file.Files.write(java.nio.file.Path.of(path), png);
+    }
+
     @Override public void close() throws Exception {
         try { ws.sendClose(WebSocket.NORMAL_CLOSURE, ""); } catch (Exception ignore) {}
     }
