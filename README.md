@@ -131,3 +131,10 @@ protocol. It is where mincdp started. See `legacy/README.md`.
 ## License
 
 MIT. See `LICENSE`.
+
+## Trademarks
+
+All product names, logos, and brands are property of their respective owners.
+Chrome is a trademark of Google; Selenium, Puppeteer, and Playwright are the
+names of their respective projects. They are used here only for identification
+and comparison, and no affiliation or endorsement is implied.
