@@ -174,7 +174,7 @@ capture proof of concept, from before browsers had a headless mode or a remote
 protocol. It is where mincdp started. See `legacy/README.md`.
 
 The dated record of how the "eyes" came about — the origin dialog, the
-timeline, and the attribution ask — is in `legacy/PROVENANCE.md`.
+timeline, and the attribution ask — is in [`legacy/PROVENANCE.md`](legacy/PROVENANCE.md).
 
 ## License
 
