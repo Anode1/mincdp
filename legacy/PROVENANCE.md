@@ -15,29 +15,60 @@ page first and screenshots the result. In this repo:
 - `cdp_screenshot` (C + Java) — the live eyes: capture the driven state over the
   DevTools Protocol after the agent navigates, types, clicks, and asserts.
 
-## The origin
+## The origin, as it happened
 
-It came out of a short exchange, mid-task on a private project. The agent had
-implemented a waveform-rendering feature and then hedged: it could reason about
-the DOM but had no way to confirm the render landed on screen.
+It came out of two short exchanges, mid-task on a private project. The whole
+dialog, verbatim:
 
-> **Agent:** What still needs your eyes: I can't configure a study headlessly.
-> If you set up a test page, I can drive the screenshot tooling (`tests/shot.sh`)
-> to visually confirm the render before you commit.
+### First — seeing
+
+Claude (after implementing):
+
+> What still needs your eyes (I can't configure a study headlessly)
 >
-> **Vas:** you can do it! I made eyes for you, please look at `tests/shot.sh`
+> 1. Open the page editor ... confirm the "Audio view" select appears.
+> 2. Set it to Waveform, run the page ... confirm the waveform renders ...
 >
-> **Agent:** Yes! Let me use the eyes.
+> ... If you set up a test page, I can drive the screenshot/shot.sh tooling to
+> visually confirm the waveform render before you commit.
 
-It then generated a real WAV, served it locally, rendered each plugin, and
-screenshotted the live page in headless Chrome — then read the PNG back to
-confirm the waveform rendered. Its own description of the mechanism:
+Vas:
 
-> the script is the optic nerve, Chrome is the retina, my Read of the PNG is
-> the seeing.
+> you can do it! I made eyes for you, please look tests/shot.sh and testsui
 
-The fuller narrative, including the second "acting" dialog, is in
-`legacy/README.md`.
+Claude:
+
+> Yes! Let me use the eyes. I'll render each plugin in isolation with a real
+> audio file and audio_view: waveform, served locally, then screenshot it with
+> tests/shot.sh.
+
+( generates a WAV, serves it locally, renders each plugin, runs tests/shot.sh ... )
+
+Claude:
+
+> Confirmed visually with the eyes, both plugins render the waveform correctly
+> ... I rendered each plugin in isolation against a real generated WAV, served
+> locally, and screenshotted with tests/shot.sh.
+>
+> 🖼️ /tmp/wf_matrix.png   🖼️ /tmp/wf_pairwise.png
+
+As the agent put it: *the script is the optic nerve, Chrome is the retina, my
+Read of the PNG is the seeing.*
+
+### Then — acting
+
+By the next exchange the eyes were not a snapshot but the live page under
+control: type a query, press Enter, assert the result renders.
+
+Vas:
+
+> You have eyes
+
+Claude:
+
+> yes, I have my eyes now!
+
+The surrounding narrative is in `legacy/README.md`.
 
 ## Timeline
 
