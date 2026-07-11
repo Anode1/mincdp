@@ -231,6 +231,19 @@
   .ask .eyebrow { color: var(--accent-2); margin-bottom: 0.7rem; }
   .ask p { font-size: 1.08rem; margin: 0; }
 
+  /* ================= CAVEAT ================= */
+  blockquote.caveat {
+    margin: 0 0 1.1rem; padding: 1.1rem 1.3rem;
+    background: var(--panel); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0;
+    font-family: var(--serif); font-style: italic; font-size: 1.02rem; line-height: 1.55; color: var(--ink);
+  }
+  blockquote.caveat .when {
+    display: block; font-family: var(--mono); font-style: normal;
+    font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent-2); margin-bottom: 0.5rem;
+  }
+
   /* ================= FOOTER ================= */
   footer { padding: clamp(2.5rem, 6vh, 4rem) 0 4rem; border-top: 1px solid var(--line); }
   .foot-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.2rem; align-items: baseline; }
@@ -349,27 +362,21 @@
       <ul class="timeline">
         <li>
           <span class="node"></span>
-          <div class="date">Jun 22 &middot; 22:08</div>
-          <div class="what">Screenshot tooling already in use.</div>
-          <div class="detail"><code>shot_test.png</code> on disk &mdash; the eyes exist before the moment that named them.</div>
-        </li>
-        <li>
-          <span class="node"></span>
-          <div class="date">Jun 23&ndash;24</div>
+          <div class="date">Jun 23 &middot; 02:03&ndash;02:30 UTC</div>
           <div class="what">Xvfb, meet headless Chrome.</div>
-          <div class="detail">Discussing automated UI testing, I picked up my 2005 Xvfb project; the agent called it dated and pointed to Chrome&rsquo;s own screenshots, native since 2017 &mdash; the pivot from screen-scrape to CDP.</div>
+          <div class="detail">I pointed the agent at my 2005 Xvfb PoC; it called the technology &ldquo;obsolete,&rdquo; wrote <code>shot.sh</code> on native headless Chrome, smoke-tested it (<code>shot_test.png</code>), and coined the framing: &ldquo;I never see the thing the browser actually paints.&rdquo;</div>
         </li>
         <li class="key">
           <span class="node"></span>
-          <div class="date">Jun 25 &middot; 00:44 &amp; 00:52</div>
-          <div class="what">The agent sees, and confirms the waveforms.</div>
-          <div class="detail"><code>wf_matrix.png</code>, <code>wf_pairwise.png</code> &mdash; Exhibits A &amp; B, captured in that session.</div>
+          <div class="date">Jun 25 &middot; 04:39&ndash;04:52 UTC</div>
+          <div class="what">First use of the eyes &mdash; the waveforms.</div>
+          <div class="detail">Minutes after &ldquo;Let me use the eyes,&rdquo; <code>shot.sh</code> rendered and confirmed the waveforms. <code>wf_matrix.png</code> (04:44) and <code>wf_pairwise.png</code> (04:52) &mdash; Exhibits A &amp; B &mdash; match the transcript to the minute.</div>
         </li>
         <li class="key">
           <span class="node"></span>
-          <div class="date">Jun 20 &middot; 22 &middot; 25</div>
+          <div class="date">Jun 25</div>
           <div class="what">Shared with the team &mdash; in two separate venues.</div>
-          <div class="detail">The work and the dialog copied into the developers&rsquo; WhatsApp across several days, and a piece of the conversation posted to the internal developers&rsquo; forum in a thread titled &ldquo;eyes&rdquo; &mdash; independent, third-party-visible, outside any repo I control.</div>
+          <div class="detail">The eyes success copied into the developers&rsquo; WhatsApp, and a piece of the conversation posted to the internal developers&rsquo; forum in a thread titled &ldquo;eyes&rdquo; &mdash; independent, third-party-visible, outside any repo I control.</div>
         </li>
         <li class="key">
           <span class="node"></span>
@@ -416,10 +423,23 @@
 
   <section class="reveal">
     <div class="wrap measure">
+      <div class="sec-head">
+        <p class="eyebrow">Honesty cuts both ways</p>
+        <h2>What the agent itself said about it.</h2>
+        <p class="lead">In those same sessions, unprompted, it argued the raw capability isn&rsquo;t novel &mdash; and was lukewarm on open-sourcing it at all. That belongs here, verbatim.</p>
+      </div>
+      <blockquote class="caveat"><span class="when">Jun 23 &middot; the agent</span>Should it be open source? Honestly, no &hellip; The capability is already well covered by mature tools: shot-scraper, capture-website, Playwright, Puppeteer, wkhtmltoimage. &hellip; The one angle with a sliver of novelty is the framing &mdash; a dependency-free, stdlib-only screenshot helper meant specifically so an agent can see localhost.</blockquote>
+      <blockquote class="caveat"><span class="when">Jun 25 &middot; the agent</span>Is it worth open-sourcing &ldquo;the eyes&rdquo;? Mostly no &hellip; the raw capability is commodity. Headless Chrome screenshots, CDP DOM driving, &ldquo;give an agent a browser&rdquo; all already exist as funded, maintained things: Playwright MCP (Microsoft), Chrome DevTools MCP (Google), browser-use, Puppeteer, shot-scraper, and Anthropic&rsquo;s own computer-use.</blockquote>
+      <p>So, plainly: screenshot-based agent vision is commodity, and funded projects &mdash; Anthropic&rsquo;s own computer-use among them &mdash; predate and coexist with this. <strong>Nothing here claims to be first at the capability, or claims anyone else&rsquo;s work.</strong> What is genuinely mine is narrow and real: the specific minimal, dependency-free implementation, the &ldquo;eyes / hands&rdquo; framing, and the choice to build it cleanly and open-source it.</p>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="wrap measure">
       <div class="claim">
         <p class="eyebrow" style="color:var(--faint);margin-bottom:1rem;">The claim, stated precisely</p>
         <p class="not"><strong>Not:</strong> I invented agent vision. I didn&rsquo;t &mdash; and my own 2005 folder proves the lineage runs deep.</p>
-        <p class="just"><strong>Just:</strong> I independently built a clean, minimal implementation, wired it into a real agent&rsquo;s verify-before-commit loop, and open-sourced it on Jul&nbsp;1 &mdash; with the origin dated Jun&nbsp;25 in a WhatsApp thread and the code dated in git.</p>
+        <p class="just"><strong>Just:</strong> I independently built a clean, minimal implementation (Jun&nbsp;23), wired it into a real agent&rsquo;s verify-before-commit loop, first used it Jun&nbsp;25, and open-sourced it on Jul&nbsp;1 &mdash; the origin dated in a WhatsApp thread, the code dated in git.</p>
         <div class="ask">
           <p class="eyebrow">What I&rsquo;m asking for</p>
           <p>Nothing but attribution. Not money, not a dispute, not a takedown &mdash; just the record of <strong>where and when this was figured out, and by whom</strong>. If the idea travels, and I hope it does, a mention is all I want.</p>

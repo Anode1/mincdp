@@ -83,15 +83,21 @@ record — are in [`legacy/eyes/`](eyes/).
 
 ## Timeline
 
-All dates are 2026. Timestamps are from the capture artifacts and git.
+Dates are 2026. Transcript times are UTC (the agent's session log); capture
+mtimes are −04:00 local — they refer to the same moments, and cross-check to the
+minute. The session transcript is excerpted in
+[`legacy/eyes/transcript-excerpt.md`](eyes/transcript-excerpt.md).
 
-| When                     | What                                                                                  | Evidence                                              |
-|--------------------------|---------------------------------------------------------------------------------------|-------------------------------------------------------|
-| Jun 22, 22:08            | Screenshot tooling already in use                                                     | `shot_test.png` (capture on disk)                     |
-| Jun 23–24                | Discussing automated UI testing, I revisited my 2005 Xvfb project; the agent noted it was dated and pointed to headless Chrome's own screenshots, native since 2017 — the pivot from screen-scrape to CDP | the Xvfb → Chrome pivot (see `legacy/`)  |
-| Jun 25, 00:44 & 00:52    | The agent sees and confirms the waveforms                                             | `legacy/eyes/wf_matrix.png`, `wf_pairwise.png` (preserved, original mtimes) |
-| Jun 20 · 22 · 25         | Work and the "eyes" dialog shared with the team, repeatedly, in two separate venues   | developers' WhatsApp thread, and the internal developers' forum — a piece of the conversation posted in a thread titled "eyes" (both third-party-visible) |
-| Jul 1                    | Open-sourced as `mincdp`                                                              | commits `9ce438c` (shot.sh eyes), `75afc9e` (cdp_screenshot) |
+| When                       | What                                                                                  | Evidence                                              |
+|----------------------------|---------------------------------------------------------------------------------------|-------------------------------------------------------|
+| Jun 23, 02:03–02:30 UTC    | I pointed the agent at my 2005 `wn`/Xvfb PoC; it called the technology "obsolete," wrote `shot.sh` on native headless Chrome, smoke-tested it, and coined the "eyes" framing ("I never see the thing the browser actually paints") | transcript; `shot_test.png` — the smoke test (mtime 22:08 −04:00 = 02:08 UTC Jun 23) |
+| Jun 25, 04:39–04:52 UTC    | **First real use of the eyes:** the agent drove `shot.sh` to render and confirm the study's waveforms | `legacy/eyes/wf_matrix.png` (04:44 UTC), `wf_pairwise.png` (04:52 UTC) — preserved; matches the transcript to the minute |
+| Jun 25                     | Shared the eyes with the team, in two separate venues                                 | developers' WhatsApp thread, and the internal developers' forum — a piece of the conversation in a thread titled "eyes" (both third-party-visible) |
+| Jul 1                      | Open-sourced as `mincdp`                                                              | commits `9ce438c` (shot.sh eyes), `75afc9e` (cdp_screenshot) |
+
+(The broader UI-testing work was shared with the team on earlier days too; the
+*eyes* specifically were built Jun 23 and first used Jun 25, so this table scopes
+to those.)
 
 ## Prior art, stated honestly
 
@@ -105,15 +111,44 @@ What is new here is not the screenshot. It is that the thing reading the
 screenshot is an agent in the middle of writing the code, using the picture to
 decide whether to commit.
 
+## What the agent itself said about novelty
+
+Honesty cuts both ways, so this belongs in the record. In the same sessions, the
+agent argued — more than once, unprompted — that the raw capability is *not*
+novel and was lukewarm on open-sourcing it at all:
+
+> *(Jun 23)* Should it be open source? Honestly, no, or at least not as a
+> standalone project. The capability is already well covered by mature tools:
+> shot-scraper, capture-website, Playwright, Puppeteer, wkhtmltoimage. ... The
+> one angle with a sliver of novelty is the framing — a dependency-free,
+> stdlib-only screenshot helper meant specifically so an agent can see localhost.
+
+> *(Jun 25)* Is it worth open-sourcing "the eyes"? Mostly no, not as a standalone
+> project ... the raw capability is commodity. Headless Chrome screenshots, CDP
+> DOM driving, "give an agent a browser" all already exist as funded, maintained
+> things: Playwright MCP (Microsoft), Chrome DevTools MCP (Google), browser-use,
+> Puppeteer, shot-scraper, and Anthropic's own computer-use.
+
+That is the honest context, and it settles the point plainly: screenshot-based
+agent vision is commodity, and several funded projects — Anthropic's own
+computer-use among them — predate and coexist with this. **Nothing here is a
+claim to have been first at the capability, or a claim over anyone else's work.**
+
+What remains genuinely this project's own is narrow and real: the specific
+minimal, dependency-free implementation (`shot.sh`, then the CDP-native clients
+in C and Java), the "eyes / hands" framing, and the decision to build it cleanly
+and open-source it on Jul 1. Attribution for *that* — not for the idea — is the
+whole ask.
+
 ## The claim, stated precisely
 
 **Not:** that agent vision was invented here. It wasn't — the 2005 folder proves
 the lineage runs deep.
 
-**Just:** that a clean, minimal implementation was independently built, wired
-into a real agent's verify-before-commit loop, shared with the team across
-Jun 20–25, and open-sourced on Jul 1 — with the origin dated in a WhatsApp
-thread and the code dated in git.
+**Just:** that a clean, minimal implementation was independently built (Jun 23),
+wired into a real agent's verify-before-commit loop and first used on Jun 25,
+shared with the team the same day, and open-sourced on Jul 1 — with the origin
+dated in a WhatsApp thread and the code dated in git.
 
 ## What is asked in return
 
