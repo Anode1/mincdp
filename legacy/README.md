@@ -53,6 +53,11 @@ same technique useful for native application development, where you want the
 whole desktop captured (a native app's window, dialogs, the lot), not just a
 single browser page.
 
+The modern, working heir of exactly this is ais's Flutter UI test: Xvfb plus
+`xdotool` (X input) and ImageMagick `import` (screenshots), driving a real native
+GUI headlessly. Same idea, current tools:
+https://github.com/Anode1/ais/tree/main/app/flutter/uitest
+
 I wanted to open-source the Xvfb approach back in 2004 and never found the time.
 Here it finally is, as a period piece.
 
