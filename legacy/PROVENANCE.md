@@ -68,7 +68,9 @@ Claude:
 
 > yes, I have my eyes now!
 
-The surrounding narrative is in `legacy/README.md`.
+The surrounding narrative is in `legacy/README.md`. The preserved artifacts —
+the two waveform captures, the verbatim dialog, and the self-contained rendered
+record — are in [`legacy/eyes/`](eyes/).
 
 ## Timeline
 
@@ -77,7 +79,7 @@ All dates are 2026. Timestamps are from the capture artifacts and git.
 | When                     | What                                                                                  | Evidence                                              |
 |--------------------------|---------------------------------------------------------------------------------------|-------------------------------------------------------|
 | Jun 22, 22:08            | Screenshot tooling already in use                                                     | `shot_test.png` (capture on disk)                     |
-| Jun 25, 00:44 & 00:52    | The agent sees and confirms the waveforms                                             | `wf_matrix.png`, `wf_pairwise.png` (captures on disk) |
+| Jun 25, 00:44 & 00:52    | The agent sees and confirms the waveforms                                             | `legacy/eyes/wf_matrix.png`, `wf_pairwise.png` (preserved, original mtimes) |
 | Jun 20 · 22 · 25         | Work and the "eyes" dialog shared with the team, repeatedly                           | developers' WhatsApp thread (third-party timestamps)  |
 | Jul 1                    | Open-sourced as `mincdp`                                                              | commits `9ce438c` (shot.sh eyes), `75afc9e` (cdp_screenshot) |
 
