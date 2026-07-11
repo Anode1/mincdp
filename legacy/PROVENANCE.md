@@ -68,6 +68,15 @@ Claude:
 
 > yes, I have my eyes now!
 
+### The shape of it — hands, then eyes
+
+Later we noticed what had happened, and it was funny: the agent already had
+*hands* — it could act on a page, type text, press Enter, click, assert the DOM
+changed — and now it had *eyes*, to see the result of what its hands had done.
+That pairing is exactly what this repo's test suite is named for: `make ut` runs
+both kinds, "so a test set has both hands and eyes" (see the README). The hands
+came first; the eyes are what June 25 added.
+
 The surrounding narrative is in `legacy/README.md`. The preserved artifacts —
 the two waveform captures, the verbatim dialog, and the self-contained rendered
 record — are in [`legacy/eyes/`](eyes/).
@@ -80,7 +89,7 @@ All dates are 2026. Timestamps are from the capture artifacts and git.
 |--------------------------|---------------------------------------------------------------------------------------|-------------------------------------------------------|
 | Jun 22, 22:08            | Screenshot tooling already in use                                                     | `shot_test.png` (capture on disk)                     |
 | Jun 25, 00:44 & 00:52    | The agent sees and confirms the waveforms                                             | `legacy/eyes/wf_matrix.png`, `wf_pairwise.png` (preserved, original mtimes) |
-| Jun 20 · 22 · 25         | Work and the "eyes" dialog shared with the team, repeatedly                           | developers' WhatsApp thread (third-party timestamps)  |
+| Jun 20 · 22 · 25         | Work and the "eyes" dialog shared with the team, repeatedly, in two separate venues   | developers' WhatsApp thread, and the internal developers' forum — a piece of the conversation posted in a thread titled "eyes" (both third-party-visible) |
 | Jul 1                    | Open-sourced as `mincdp`                                                              | commits `9ce438c` (shot.sh eyes), `75afc9e` (cdp_screenshot) |
 
 ## Prior art, stated honestly
