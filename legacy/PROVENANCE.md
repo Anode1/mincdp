@@ -88,6 +88,7 @@ All dates are 2026. Timestamps are from the capture artifacts and git.
 | When                     | What                                                                                  | Evidence                                              |
 |--------------------------|---------------------------------------------------------------------------------------|-------------------------------------------------------|
 | Jun 22, 22:08            | Screenshot tooling already in use                                                     | `shot_test.png` (capture on disk)                     |
+| Jun 23–24                | Discussing automated UI testing, I revisited my 2005 Xvfb project; the agent noted it was dated and pointed to headless Chrome's own screenshots, native since 2017 — the pivot from screen-scrape to CDP | the Xvfb → Chrome pivot (see `legacy/`)  |
 | Jun 25, 00:44 & 00:52    | The agent sees and confirms the waveforms                                             | `legacy/eyes/wf_matrix.png`, `wf_pairwise.png` (preserved, original mtimes) |
 | Jun 20 · 22 · 25         | Work and the "eyes" dialog shared with the team, repeatedly, in two separate venues   | developers' WhatsApp thread, and the internal developers' forum — a piece of the conversation posted in a thread titled "eyes" (both third-party-visible) |
 | Jul 1                    | Open-sourced as `mincdp`                                                              | commits `9ce438c` (shot.sh eyes), `75afc9e` (cdp_screenshot) |
