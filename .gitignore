@@ -1,5 +1,6 @@
 # build output
 c/demo
+c/agent
 java/out/
 tests/codeut
 *.o

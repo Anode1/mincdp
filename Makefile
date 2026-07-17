@@ -1,9 +1,16 @@
 # mincdp -- build the demos and run the regression suite. The browser layers
 # need a headless Chrome/Chromium on PATH; without one they SKIP (exit 77).
-.PHONY: c java demo demo-c demo-java ut shot clean
+.PHONY: c java demo demo-c demo-java agent ut shot clean
 
 c:
 	cc -std=c99 -Wall -Wextra -O2 -o c/demo c/demo.c
+
+# agent -- Claude's eyes and hands: screenshot -> ask the model -> replay one
+# action -> repeat. Needs ANTHROPIC_API_KEY and curl on PATH (SKIP otherwise).
+#     make agent GOAL="type 'mincdp works' into the box and press Enter"
+agent:
+	cc -std=c99 -Wall -Wextra -O2 -o c/agent c/agent.c
+	sh agent.sh "$(GOAL)"
 
 java:
 	javac -d java/out java/Cdp.java java/Demo.java
@@ -26,5 +33,5 @@ shot:
 	sh tests/shot.sh
 
 clean:
-	rm -f c/demo tests/codeut
+	rm -f c/demo c/agent tests/codeut
 	rm -rf java/out

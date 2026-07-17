@@ -5,9 +5,9 @@ chromedriver. Two tiny, dependency-free clients that speak the Chrome DevTools
 Protocol (CDP) straight to the browser over a WebSocket, in the language of your
 stack:
 
-- **C** — `c/cdp.h`, a single header-only library (~410 lines, libc + POSIX
+- **C**: `c/cdp.h`, a single header-only library (~410 lines, libc + POSIX
   sockets only).
-- **Java** — `java/Cdp.java`, a single file (JDK `java.net.http` only, nothing
+- **Java**: `java/Cdp.java`, a single file (JDK `java.net.http` only, nothing
   to vendor).
 
 Same idea, same small command set, one demonstration each against the same page.
@@ -42,6 +42,7 @@ make demo-c      # build c/demo and run it against page.html
 make demo-java   # build java/Demo and run it against page.html
 make demo        # both
 make shot        # screenshot page.html so you can SEE it
+make agent GOAL="..."   # let Claude drive the page toward a goal (needs an API key)
 ```
 
 Each demo prints a series of assertions and a `demo: N passed, 0 failed` line. It
@@ -90,6 +91,56 @@ serve both languages:
 ```
 PROG... 127.0.0.1 <chrome-port> file://<abs>/page.html
 ```
+
+## Eyes and hands for an agent
+
+The same two primitives that make a smoke test, a screenshot (eyes) and the
+input calls (hands), are the entire surface an LLM needs to drive a browser.
+`c/agent.c` is that loop and nothing else. See, think, act, repeated.
+
+- **See.** `cdp_screenshot` captures the live page, whatever state prior actions
+  drove it to.
+- **Think.** The PNG plus a one-line goal go to the Claude API over `curl` (the
+  one hop raw sockets can't do here is the TLS to `api.anthropic.com`). The model
+  replies with exactly one action.
+- **Act.** The client replays that one action against the page, then loops.
+
+The model gets a screenshot and answers with a single line, one of:
+
+| Reply | Hand |
+|-------|------|
+| `NAV <url>` | `cdp_navigate` |
+| `TYPE <text>` | `cdp_insert_text` |
+| `KEY <name>` | `cdp_key` (e.g. `KEY Enter`) |
+| `JS <expr>` | `cdp_eval_bool`, a `querySelector(...).click()||true` to click or focus |
+| `DONE <note>` | stop |
+
+Same substring trick as the client: the reply is one short line, so pulling the
+action out of the response is a single `"text":"..."` find, not a JSON parser.
+
+```
+export ANTHROPIC_API_KEY=sk-ant-...
+make agent GOAL="type 'mincdp works' into the box and press Enter"
+```
+
+A run against `page.html` looks like:
+
+```
+step  1: JS document.getElementById('q').focus()||true
+step  2: TYPE mincdp works
+step  3: KEY Enter
+step  4: DONE the box shows "echo: mincdp works"
+```
+
+Each step is a full loop: the model looked at a fresh screenshot, chose the next
+keystroke, and mincdp replayed it, closing on `DONE` when the screenshot showed
+the goal met.
+
+It is deliberately a sketch: one action per turn, substring parsing, no retries,
+thinking off for speed. That minimalism is the point. It is small enough to read
+end to end before you let a model drive a browser. Like the demos, it SKIPs
+(exit 77) when Chrome, `curl`, or `ANTHROPIC_API_KEY` is missing. See
+`c/agent.c` and `agent.sh`.
 
 ## The API
 
@@ -159,6 +210,8 @@ page.html          self-contained demo target (no server, no network)
 demo.sh            launch Chrome, run a demo, tear down (shared by both)
 Makefile           make ut / demo-c / demo-java / demo / shot / clean
 c/cdp.h            the C client (single-header library)
+c/agent.c          the agent loop: screenshot, Claude, replay one action
+agent.sh           launch Chrome, run the agent toward a GOAL, tear down
 c/demo.c           the C demonstration = the uiut interaction test (hands)
 java/Cdp.java      the Java client (single file)
 java/Demo.java     the Java demonstration = the uiut interaction test (hands)
@@ -173,8 +226,8 @@ tests/shot.sh      the eyes: screenshot page.html to a PNG (Chrome --screenshot)
 capture proof of concept, from before browsers had a headless mode or a remote
 protocol. It is where mincdp started. See `legacy/README.md`.
 
-The dated record of how the "eyes" came about — the origin dialog, the
-timeline, and the attribution ask — is in [`legacy/PROVENANCE.md`](legacy/PROVENANCE.md).
+The dated record of how the "eyes" came about (the origin dialog, the
+timeline, and the attribution ask) is in [`legacy/PROVENANCE.md`](legacy/PROVENANCE.md).
 
 ## License
 
